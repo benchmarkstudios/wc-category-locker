@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Category Locker
  * Plugin URI: https://github.com/lukasjuhas/wc-category-locker
  * Description: Adds ability to password lock each category.
- * Version: 0.1
+ * Version: 1.0-alpha1
  * Author: Lukas Juhas, Benchmark Studios
  * Author URI: http://benchmark.co.uk/
  * Text Domain: wc-category-locker
@@ -29,24 +29,17 @@
 # Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'WCL_VERSION', '0.0.1' );
+define( 'WCL_VERSION', '1.0' );
 define( 'WCL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WCL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WCL_PLUGIN_BASENAME', plugin_basename( __FILE__ ));
 define( 'WCL_PLUGIN_DOMAIN', 'wc-category-locker' );
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-  include( WCL_PLUGIN_DIR  . 'functions.php' );
-  include( WCL_PLUGIN_DIR  . 'admin.php' );
+  //TODO: check for woocommerce version, validate version to make sure it works.
+  //This will require testing on older versions of woocomerce to see which can handle it
+  include( WCL_PLUGIN_DIR . 'includes/functions.php' );
+  include( WCL_PLUGIN_DIR . 'admin.php' );
+  include( WCL_PLUGIN_DIR . 'frontend.php' );
+  include( WCL_PLUGIN_DIR . 'wc-category-locker.php' );
 }
-
-class WC_Category_Locker {
-  function __construct() {
-    // make sure WooCommerce is enabled
-    if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-
-    }
-  }
-}
-# init
-$WC_Category_Locker = new WC_Category_Locker();
