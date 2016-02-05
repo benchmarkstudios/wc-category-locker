@@ -36,3 +36,7 @@ function wcl_get_the_password_form($category_id = false)
      */
     return apply_filters('wcl_the_password_form', $output);
 }
+
+function wcl_get_visitors_locked_categories() {
+    
+}

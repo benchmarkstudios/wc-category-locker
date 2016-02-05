@@ -38,7 +38,7 @@ define( 'WCL_PLUGIN_DOMAIN', 'wc-category-locker' );
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
   //TODO: check for woocommerce version, validate version to make sure it works.
   //This will require testing on older versions of woocomerce to see which can handle it
-  include( WCL_PLUGIN_DIR . 'vendor/Crypt.php' );
+  include( WCL_PLUGIN_DIR . 'vendor/crypt-php.php' );
   include( WCL_PLUGIN_DIR . 'includes/functions.php' );
   include( WCL_PLUGIN_DIR . 'admin.php' );
   include( WCL_PLUGIN_DIR . 'frontend.php' );
