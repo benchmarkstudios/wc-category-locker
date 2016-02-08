@@ -139,14 +139,7 @@ class Crypt {
         $hmac = hash_hmac(self::HMAC_ALGORITHM, $init_vector . self::DELIMITER . $cipher, $this->getKey());
         $encoded_init_vector = base64_encode($init_vector);
         $encoded_cipher = base64_encode($cipher);
-
-        // // HACK - due to error where if this contains a "+" it decryption fails, for time being we are calling method to recreate a new hash
-        $hash = self::PREFIX . self::DELIMITER . $encoded_init_vector . self::DELIMITER . $encoded_cipher . self::DELIMITER . $hmac;
-        // if(strpos($hash, '+') !== false) {
-        //   $this->encrypt();
-        // } else {
-          return $hash;
-        // }
+        return self::PREFIX . self::DELIMITER . $encoded_init_vector . self::DELIMITER . $encoded_cipher . self::DELIMITER . $hmac;
     }
     /**
      * Decrypts encrypted cipher using symmetric-key encryption

@@ -74,6 +74,8 @@ class WC_Category_Locker
           }
         }
 
+        //TODO Handle multiple cookies, e.g. if current category id is different
+        //from the cookie one, ask fro password, otherwise show products
         $matched = array();
         if(empty($wcl_cookies)) {
             $this->generate_cat_pass_cookie($cat_id);

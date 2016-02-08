@@ -11,7 +11,7 @@ class WC_Category_Locker_Frontend
     public function __construct()
     {
         add_action('pre_get_posts', array($this, 'password'), 25);
-        // add_action('pre_get_posts', array($this, 'update_shop_queries'), 26);
+        add_action('pre_get_posts', array($this, 'update_shop_queries'), 26);
     }
 
     /**
@@ -62,7 +62,6 @@ class WC_Category_Locker_Frontend
                 if(in_array(get_queried_object()->term_id, $matched)) {
                     return;
                 }
-
                 // if it is, remove woocommerce template contents,
                 // include password form
                 add_filter('template_include', array($this, 'replace_template'));
@@ -96,13 +95,32 @@ class WC_Category_Locker_Frontend
         if ( ! $query->is_main_query() ) return;
         if ( ! $query->is_post_type_archive() ) return;
 
-        $locked = array(307, 319);
+        $locked = $this->get_locked_categories();
         $query->set( 'tax_query', array(array(
             'taxonomy' => 'product_cat',
             'field' => 'id',
             'terms' => $locked,
             'operator' => 'NOT IN'
         )));
+    }
+
+    /**
+     * ID list of categories that are locked
+     * @author Lukas Juhas
+     * @date   2016-02-08
+     * @return [type]     [description]
+     */
+    function get_locked_categories() {
+        $locked = array();
+        $shop_terms = get_terms('product_cat');
+        foreach($shop_terms as $term) {
+            $is_password_protected = get_woocommerce_term_meta($term->term_id, 'wcl_cat_password_protected');
+            if($is_password_protected) {
+                $locked[] = $term->term_id;
+            }
+        }
+
+        return $locked;
     }
 }
 # init
