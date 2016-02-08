@@ -103,32 +103,13 @@ class WC_Category_Locker_Frontend
         if ( ! $query->is_main_query() ) return;
         if ( ! $query->is_post_type_archive() ) return;
 
-        $locked = $this->get_locked_categories();
+        $locked = wcl_get_visitors_locked_categories();
         $query->set( 'tax_query', array(array(
             'taxonomy' => 'product_cat',
             'field' => 'id',
             'terms' => $locked,
             'operator' => 'NOT IN'
         )));
-    }
-
-    /**
-     * ID list of categories that are locked
-     * @author Lukas Juhas
-     * @date   2016-02-08
-     * @return [type]     [description]
-     */
-    function get_locked_categories() {
-        $locked = array();
-        $shop_terms = get_terms('product_cat');
-        foreach($shop_terms as $term) {
-            $is_password_protected = get_woocommerce_term_meta($term->term_id, 'wcl_cat_password_protected');
-            if($is_password_protected) {
-                $locked[] = $term->term_id;
-            }
-        }
-
-        return $locked;
     }
 }
 # init

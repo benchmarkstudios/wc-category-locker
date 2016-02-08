@@ -39,6 +39,21 @@ function wcl_get_the_password_form($category_id = false)
     return apply_filters('wcl_the_password_form', $output);
 }
 
+/**
+ * ID list of categories that are locked
+ * @author Lukas Juhas
+ * @date   2016-02-08
+ * @return [type]     [description]
+ */
 function wcl_get_visitors_locked_categories() {
+    $locked = array();
+    $shop_terms = get_terms('product_cat');
+    foreach($shop_terms as $term) {
+        $is_password_protected = get_woocommerce_term_meta($term->term_id, 'wcl_cat_password_protected');
+        if($is_password_protected) {
+            $locked[] = $term->term_id;
+        }
+    }
 
+    return $locked;
 }
