@@ -18,7 +18,9 @@ function wcl_get_the_password_form($category_id = false)
     $label = 'wcl_pwbox-'.(!isset($category_id) ? rand() : $category_id);
     $output = '<form action="'.esc_url(site_url('wp-login.php?action=postpass', 'login_post')).'" class="post-password-form" method="post">
 	<p>'.__('This content is password protected. To view it please enter your password below:').'</p>
-	<p><label for="'.$label.'">'.__('Password:').' <input name="wcl_cat_password" id="'.$label.'" type="password" size="20" /></label>
+	<p><label for="'.$label.'">'.__('Password:').'
+  <div class="form__group form-group"><input name="wcl_cat_password" id="'.$label.'" type="password" size="20" /></div>
+  </label>
   <input type="hidden" name="wcl_cat_id" value="'.$category_id.'" />
   <input type="submit" name="Submit" value="'.esc_attr__('Submit').'" /></p></form>
 	';
@@ -38,5 +40,5 @@ function wcl_get_the_password_form($category_id = false)
 }
 
 function wcl_get_visitors_locked_categories() {
-    
+
 }

@@ -79,9 +79,17 @@ class WC_Category_Locker_Frontend
      */
     public function replace_template($template)
     {
-        // TODO: make this dynamic ability to overwrite this template if you
-        // copy it to your theme
-        return WCL_PLUGIN_DIR . '/templates/password-form.php';
+        // see if tempalte exists in the theme
+        $located = locate_template( 'woocommerce/password-form.php' );
+        if ( !empty( $located ) ) {
+            // if yes, use theme template
+            $template = get_template_directory() . '/woocommerce/password-form.php';
+        } else {
+            // otherwise use default plugin template
+            $template = WCL_PLUGIN_DIR . '/templates/password-form.php';
+        }
+
+        return $template;
     }
 
     /**
