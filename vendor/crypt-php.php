@@ -132,6 +132,27 @@ class Crypt
     {
         return $this->complexTypes;
     }
+
+    /**
+     * base65 encode url like
+     * @author Lukas Juhas
+     * @return string
+     */
+    private function base64url_encode($data)
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
+    /**
+     * base65 decode url like
+     * @author Lukas Juhas
+     * @return string
+     */
+    private function base64url_decode($data)
+    {
+        return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+    }
+
     /**
      * Encrypts the given data using symmetric-key encryption
      *
@@ -149,8 +170,8 @@ class Crypt
         }
         $cipher = mcrypt_generic($this->getModule(), $this->getData());
         $hmac = hash_hmac(self::HMAC_ALGORITHM, $init_vector . self::DELIMITER . $cipher, $this->getKey());
-        $encoded_init_vector = base64_encode($init_vector);
-        $encoded_cipher = base64_encode($cipher);
+        $encoded_init_vector = $this->base64url_encode($init_vector);
+        $encoded_cipher = $this->base64url_encode($cipher);
         return self::PREFIX . self::DELIMITER . $encoded_init_vector . self::DELIMITER . $encoded_cipher . self::DELIMITER . $hmac;
     }
     /**
@@ -166,8 +187,8 @@ class Crypt
             $message = sprintf('The given data does not appear to be encrypted with %s', __CLASS__);
             throw new Exception($message, 1);
         }
-        $init_vector = base64_decode($elements[1]);
-        $cipher = base64_decode($elements[2]);
+        $init_vector = $this->base64url_decode($elements[1]);
+        $cipher = $this->base64url_decode($elements[2]);
         $given_hmac = $elements[3];
         $hmac = hash_hmac(self::HMAC_ALGORITHM, $init_vector . self::DELIMITER . $cipher, $this->getKey());
         if ($given_hmac != $hmac) {
