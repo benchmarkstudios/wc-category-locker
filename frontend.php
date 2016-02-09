@@ -131,6 +131,10 @@ class WC_Category_Locker_Frontend
     public function redirect_from_locked_product()
     {
         global $post;
+
+        // make sure we can access $post global to prevent errors
+        if(!isset($post)) return false;
+
         // get terms of current "post" / "page"
         $terms = get_the_terms($post->ID, 'product_cat');
 
