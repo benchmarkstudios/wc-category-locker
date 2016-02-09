@@ -45,12 +45,13 @@ function wcl_get_the_password_form($category_id = false)
  * @date   2016-02-08
  * @return [type]     [description]
  */
-function wcl_get_visitors_locked_categories() {
+function wcl_get_locked_categories()
+{
     $locked = array();
     $shop_terms = get_terms('product_cat');
-    foreach($shop_terms as $term) {
+    foreach ($shop_terms as $term) {
         $is_password_protected = get_woocommerce_term_meta($term->term_id, 'wcl_cat_password_protected');
-        if($is_password_protected) {
+        if ($is_password_protected) {
             $locked[] = $term->term_id;
         }
     }

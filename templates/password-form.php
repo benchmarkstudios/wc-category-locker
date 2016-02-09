@@ -1,27 +1,25 @@
-<?php get_header(); ?>
+<?php
+/**
+ * The template for displaying passwrod form on category pages
+ *
+ * DO NOT OVERWRITE - make a copy to your theme/woocomerce folder
+ * and you can modify markup there.
+ *
+ * @since 1.0
+ */
 
-<main class="main" role="main">
-   <div class="container clear">
+ if ( ! defined( 'ABSPATH' ) ) {
+ 	exit; // Exit if accessed directly
+ }
 
-      <article <?php post_class(); ?>>
+get_header(); ?>
 
-        <?php if(is_cart()) : ?>
-            <header class="page-header" role="heading">
-                <h1 class="post__title"><?php the_title(); ?></h1>
-            </header>
-        <?php else : ?>
-            <h1 class="shop-page-title"><?php the_title(); ?></h1>
-        <?php endif; ?>
+<div id="primary" class="content-area">
+  	<main id="main" class="site-main" role="main">
+        <h1 class="page-title"><?php the_title(); ?></h1>
+  		  <?php echo wcl_get_the_password_form(); ?>
+  	</main>
+</div>
 
-        <div class="row">
-            <div class="col col--xs-12 col--sm-12 col--md-12 col--lg-12">
-                <?php echo wcl_get_the_password_form(); ?>
-            </div>
-        </div>
-
-      </article>
-
-
-   </div>
-</main>
+<?php get_sidebar(); ?>
 <?php get_footer(); ?>

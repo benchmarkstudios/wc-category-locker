@@ -12,7 +12,8 @@
  * @since      Class available since Version 1.0.0
  * @link       http://github.com/osmanungur/crypt-php
  */
-class Crypt {
+class Crypt
+{
     private $data;
     private $key;
     private $module;
@@ -23,7 +24,8 @@ class Crypt {
     const MCRYPT_MOD = 'cfb';
     const PREFIX = 'wcl_';
     const MINIMUM_KEY_LENGTH = 1;
-    function __construct() {
+    public function __construct()
+    {
         $this->checkEnvironment();
         $this->setModule(mcrypt_module_open(self::MCRYPT_MODULE, '', self::MCRYPT_MOD, ''));
     }
@@ -33,7 +35,8 @@ class Crypt {
      * @return void
      * @author Osman Üngür
      */
-    private function checkEnvironment() {
+    private function checkEnvironment()
+    {
         if ((!extension_loaded('mcrypt')) || (!function_exists('mcrypt_module_open'))) {
             throw new Exception('The PHP mcrypt extension must be installed for encryption', 1);
         }
@@ -48,7 +51,8 @@ class Crypt {
      * @return void
      * @author Osman Üngür
      */
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->data = $data;
     }
     /**
@@ -58,7 +62,8 @@ class Crypt {
      * @return void
      * @author Osman Üngür
      */
-    public function setKey($key) {
+    public function setKey($key)
+    {
         if (strlen($key) < self::MINIMUM_KEY_LENGTH) {
             $message = sprintf('The secret key must be a minimum %s character long', self::MINIMUM_KEY_LENGTH);
             throw new Exception($message, 1);
@@ -72,7 +77,8 @@ class Crypt {
      * @return void
      * @author Osman Üngür
      */
-    private function setModule($module) {
+    private function setModule($module)
+    {
         $this->module = $module;
     }
     /**
@@ -82,7 +88,8 @@ class Crypt {
      * @return void
      * @author Osman Üngür
      */
-    public function setComplexTypes($complexTypes) {
+    public function setComplexTypes($complexTypes)
+    {
         $this->complexTypes = $complexTypes;
     }
     /**
@@ -91,7 +98,8 @@ class Crypt {
      * @return mixed
      * @author Osman Üngür
      */
-    private function getData() {
+    private function getData()
+    {
         return $this->data;
     }
     /**
@@ -100,7 +108,8 @@ class Crypt {
      * @return string
      * @author Osman Üngür
      */
-    private function getKey() {
+    private function getKey()
+    {
         return $this->key;
     }
     /**
@@ -109,7 +118,8 @@ class Crypt {
      * @return resource
      * @author Osman Üngür
      */
-    private function getModule() {
+    private function getModule()
+    {
         return $this->module;
     }
     /**
@@ -118,7 +128,8 @@ class Crypt {
      * @return bool
      * @author Osman Üngür
      */
-    private function getComplexTypes() {
+    private function getComplexTypes()
+    {
         return $this->complexTypes;
     }
     /**
@@ -127,7 +138,8 @@ class Crypt {
      * @return string
      * @author Osman Üngür
      */
-    public function encrypt() {
+    public function encrypt()
+    {
         mt_srand();
         $init_vector = mcrypt_create_iv(mcrypt_enc_get_iv_size($this->getModule()), MCRYPT_RAND);
         $key = substr(sha1($this->getKey()), 0, mcrypt_enc_get_key_size($this->getModule()));
@@ -147,7 +159,8 @@ class Crypt {
      * @return mixed
      * @author Osman Üngür
      */
-    public function decrypt() {
+    public function decrypt()
+    {
         $elements = explode(self::DELIMITER, $this->getData());
         if (count($elements) != 4 || $elements[0] != self::PREFIX) {
             $message = sprintf('The given data does not appear to be encrypted with %s', __CLASS__);
@@ -168,7 +181,8 @@ class Crypt {
         }
         return $result;
     }
-    public function __destruct() {
+    public function __destruct()
+    {
         @mcrypt_generic_deinit($this->getModule());
         mcrypt_module_close($this->getModule());
     }

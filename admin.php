@@ -9,10 +9,10 @@ class WC_Category_Locker_Admin
      */
     public function __construct()
     {
-        add_action( 'product_cat_add_form_fields', array( $this, 'add_category_fields' ), 25 );
-        add_action( 'product_cat_edit_form_fields', array( $this, 'edit_category_fields' ), 25 );
-        add_action( 'created_term', array( $this, 'save_category_fields' ), 10, 3 );
-        add_action( 'edit_term', array( $this, 'save_category_fields' ), 10, 3 );
+        add_action('product_cat_add_form_fields', array( $this, 'add_category_fields' ), 25);
+        add_action('product_cat_edit_form_fields', array( $this, 'edit_category_fields' ), 25);
+        add_action('created_term', array( $this, 'save_category_fields' ), 10, 3);
+        add_action('edit_term', array( $this, 'save_category_fields' ), 10, 3);
     }
 
     /**
@@ -114,7 +114,7 @@ class WC_Category_Locker_Admin
      *
      * @return [type] [description]
      */
-    function save_category_fields($term_id, $tt_id = '', $taxonomy = '')
+    public function save_category_fields($term_id, $tt_id = '', $taxonomy = '')
     {
         if (isset($_POST['wcl_cat_password_protected']) && 'product_cat' === $taxonomy) {
             update_woocommerce_term_meta($term_id, 'wcl_cat_password_protected', absint($_POST['wcl_cat_password_protected']));

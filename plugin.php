@@ -27,20 +27,22 @@
 */
 
 # Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+if (! defined('ABSPATH')) {
+    exit;
+}
 
-define( 'WCL_VERSION', '1.0' );
-define( 'WCL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'WCL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WCL_PLUGIN_BASENAME', plugin_basename( __FILE__ ));
-define( 'WCL_PLUGIN_DOMAIN', 'wc-category-locker' );
+define('WCL_VERSION', '1.0');
+define('WCL_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('WCL_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('WCL_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('WCL_PLUGIN_DOMAIN', 'wc-category-locker');
 
-if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
   //TODO: check for woocommerce version, validate version to make sure it works.
   //This will require testing on older versions of woocomerce to see which can handle it
-  include( WCL_PLUGIN_DIR . 'vendor/crypt-php.php' );
-  include( WCL_PLUGIN_DIR . 'includes/functions.php' );
-  include( WCL_PLUGIN_DIR . 'admin.php' );
-  include( WCL_PLUGIN_DIR . 'frontend.php' );
-  include( WCL_PLUGIN_DIR . 'wc-category-locker.php' );
+  include(WCL_PLUGIN_DIR . 'vendor/crypt-php.php');
+  include(WCL_PLUGIN_DIR . 'includes/functions.php');
+  include(WCL_PLUGIN_DIR . 'admin.php');
+  include(WCL_PLUGIN_DIR . 'frontend.php');
+  include(WCL_PLUGIN_DIR . 'wc-category-locker.php');
 }
