@@ -1,6 +1,23 @@
-# wc-category-locker
+# WooCommerce Category Locker
 Adds ability to password lock each category.
 
-## Requirements
+### Info
+* Current Stage of development - Testing, adding extra small features
+* WooCommerce versions support - latest (older not tested yet)
 
-* Latest PHP 5.4.X, 5.6.X or 7.X.X (Due to Crypt-PHP library conmpatibility)
+
+## Hooks
+List of available actions and filters:
+
+### Actions
+* wcl_before_passform - runs before Password Form
+* wcl_after_passform - runs after Password Form
+
+### Filters
+* wcl_passform_classes - Password <form> classes
+* wcl_passform_submit_label - Password form submit button label
+* wcl_passform_submit_classes - Password form submit button classes
+* wcl_passform_input_classes - Password form input classes
+* wcl_passform_input_placeholder - Password form input placeholder
+* wcl_passform_description - Password form description shown above input and submit button
+* wcl_password_form - Entire form markup

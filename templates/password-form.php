@@ -17,7 +17,9 @@ get_header(); ?>
 <div id="primary" class="content-area">
   	<main id="main" class="site-main" role="main">
         <h1 class="page-title"><?php the_title(); ?></h1>
+        <?php do_action('wcl_before_passform'); ?>
   		  <?php echo wcl_get_the_password_form(); ?>
+        <?php do_action('wcl_after_passform'); ?>
   	</main>
 </div>
 

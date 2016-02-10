@@ -169,7 +169,12 @@ class WC_Category_Locker_Frontend
 
             // see if product has locked category
             $locked = wcl_get_locked_categories();
-            $result = array_intersect($locked, $product_cat_ids);
+
+            // intersect both arrays
+            $result_intersect = array_intersect($locked, $product_cat_ids);
+
+            // tidy up our array, make sure it starts form 0
+            $result = array_values( $result_intersect );
 
             // get all present wcl_cookies as there might be multiple categories
             // that are password protected
@@ -192,7 +197,7 @@ class WC_Category_Locker_Frontend
 
                 // if there are cookies and they match, that means the category
                 // where product is is current unlocked - let visitor in.
-                if( $result[0] == $matched[0] ) {
+                if((isset($result) && isset($matched)) && $result[0] == $matched[0] ) {
                   return;
                 }
             }
