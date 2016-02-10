@@ -5,6 +5,12 @@ Adds ability to password lock each category.
 * Current Stage of development - Testing, adding extra small features
 * WooCommerce versions support - latest (older not tested yet)
 
+### TODO (for 1.0 Release)
+* Test compatibility with twentyx themes
+* Test compatibility with some of the free WooCommerce themes
+* Add more hooks and filters
+* Version testing for WooCommerce and check for version when enabling plugin
+* Version testing for WordPress
 
 ## Hooks
 List of available actions and filters:
