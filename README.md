@@ -6,6 +6,7 @@ Adds ability to password lock each category.
 * WooCommerce versions support - latest (older not tested yet)
 
 ### TODO (for 1.0 Release)
+* Better crypt-php exception handling - redirects / messages
 * Test compatibility with twentyx themes
 * Test compatibility with some of the free WooCommerce themes
 * Add more hooks and filters

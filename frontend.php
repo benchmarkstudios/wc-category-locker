@@ -157,6 +157,9 @@ class WC_Category_Locker_Frontend
         // make sure we can access $post global to prevent errors
         if(!isset($post)) return false;
 
+        // if it's not product page, we don't need to check further
+        if(!is_product()) return false;
+
         // get terms of current "post" / "page"
         $terms = get_the_terms($post->ID, 'product_cat');
 
