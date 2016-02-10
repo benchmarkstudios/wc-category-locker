@@ -16,6 +16,26 @@ class WC_Category_Locker_Frontend
     }
 
     /**
+     * get plugin cookies
+     * @author Lukas Juhas
+     * @date   2016-02-10
+     * @return [type]     [description]
+     */
+    public function get_cookies()
+    {
+        // loop thorugh the cookies and ones with our prefix put in to
+        // new array which we then return`
+        $wcl_cookies = array();
+        foreach ($_COOKIE as $ec => $ec_val) {
+            if (strpos($ec, 'wcl_') !== false) {
+                $wcl_cookies[$ec] = $ec_val;
+            }
+        }
+
+        return $wcl_cookies;
+    }
+
+    /**
      * main front end function wchich decides if the category is password
      * protected or not
      *
@@ -34,19 +54,15 @@ class WC_Category_Locker_Frontend
         if (isset(get_queried_object()->term_id)) :
             // get all present wcl_cookies as there might be multiple categories
             // that are password protected
-            foreach ($_COOKIE as $ec => $ec_val) {
-                if (strpos($ec, 'wcl_') !== false) {
-                    $wcl_cookies[$ec] = $ec_val;
-                }
-            }
+            $wcl_cookies = $this->get_cookies();
 
             // check if it's password protected
             $is_password_protected = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password_protected');
-        if ($is_password_protected) {
-            $matched = array();
-            if (!empty($wcl_cookies)) {
-                foreach ($wcl_cookies as $wclc_hash => $wclc_val) {
-                    // make sure value is 1
+            if ($is_password_protected) {
+                $matched = array();
+                if (!empty($wcl_cookies)) {
+                    foreach ($wcl_cookies as $wclc_hash => $wclc_val) {
+                        // make sure value is 1
                         if ($wclc_val) {
                             // get current category id password
                             $cat_pass = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password', true);
@@ -56,18 +72,18 @@ class WC_Category_Locker_Frontend
                             $crypt->setData($wclc_hash);
                             $matched[] = $crypt->decrypt();
                         }
+                    }
                 }
-            }
 
-            // if cookie is validated - which means user is logged in
-            // just return
-            if (in_array(get_queried_object()->term_id, $matched)) {
-                return;
+                // if cookie is validated - which means user is logged in
+                // just return
+                if (in_array(get_queried_object()->term_id, $matched)) {
+                    return;
+                }
+                // if it is, remove woocommerce template contents,
+                // include password form
+                add_filter( 'template_include', array($this, 'replace_template') );
             }
-            // if it is, remove woocommerce template contents,
-            // include password form
-            add_filter( 'template_include', array($this, 'replace_template') );
-        }
         endif;
     }
 
@@ -104,14 +120,20 @@ class WC_Category_Locker_Frontend
      */
     public function update_shop_queries($query)
     {
+        // make sure it's main query
         if (! $query->is_main_query()) {
             return;
         }
+
+        // make sure its archive page
         if (! $query->is_post_type_archive()) {
             return;
         }
 
+        // get locked categories / taxonomies
         $locked = wcl_get_locked_categories();
+
+        // set query to exclude locked ones
         $query->set('tax_query', array(array(
             'taxonomy' => 'product_cat',
             'field' => 'id',
@@ -148,6 +170,32 @@ class WC_Category_Locker_Frontend
             // see if product has locked category
             $locked = wcl_get_locked_categories();
             $result = array_intersect($locked, $product_cat_ids);
+
+            // get all present wcl_cookies as there might be multiple categories
+            // that are password protected
+            $wcl_cookies = $this->get_cookies();
+
+            $matched = array();
+            if (!empty($wcl_cookies)) {
+                foreach ($wcl_cookies as $wclc_hash => $wclc_val) {
+                    // make sure value is 1
+                    if ($wclc_val) {
+                        // get current category id password
+                        $cat_pass = get_woocommerce_term_meta($terms[0]->term_id, 'wcl_cat_password', true);
+                        // decrypt cookie
+                        $crypt = new Crypt();
+                        $crypt->setKey($cat_pass);
+                        $crypt->setData($wclc_hash);
+                        $matched[] = $crypt->decrypt();
+                    }
+                }
+
+                // if there are cookies and they match, that means the category
+                // where product is is current unlocked - let visitor in.
+                if( $result[0] == $matched[0] ) {
+                  return;
+                }
+            }
 
             // if yes, redirect to the category page (to enter password)
             // we add is_product() check so the redirect doesn't end up being
