@@ -69,18 +69,10 @@ class WC_Category_Locker
      */
     private function handle_cookies($cat_id)
     {
-        // get all present wcl_cookies as there might be multiple categories
-        // that are password protected
-        foreach ($_COOKIE as $ec => $ec_val) {
-            if (strpos($ec, 'wcl_') !== false) {
-                $wcl_cookies[$ec] = $ec_val;
-            }
-        }
+        $cookie = 'wcl_' . md5( $cat_id );
+        $hash = isset($_COOKIE[ wp_unslash( $cookie ) ]) ? $_COOKIE[ wp_unslash( $cookie ) ] : false;
 
-        //TODO Handle multiple cookies, e.g. if current category id is different
-        //from the cookie one, ask fro password, otherwise show products
-        $matched = array();
-        if (empty($wcl_cookies)) {
+        if (!$hash) {
             $this->generate_cat_pass_cookie($cat_id);
         }
 
@@ -98,13 +90,18 @@ class WC_Category_Locker
     {
         // encrypted cookie
         $cat_pass = get_woocommerce_term_meta($cat_id, 'wcl_cat_password', true);
-        $crypt = new Crypt();
-        $crypt->setKey($cat_pass);
-        $crypt->setData($cat_id);
-        $cookie = $crypt->encrypt();
+
+        require_once ABSPATH . WPINC . '/class-phpass.php';
+      	$hasher = new PasswordHash( 8, true );
+
+        $cookie = 'wcl_' . md5( $cat_id );
         if (!isset($_COOKIE[$cookie])) {
-            // create cookie for 30min
-            setcookie($cookie, 1, time() + 30*60, COOKIEPATH, COOKIE_DOMAIN, false);
+            // create cookie for 30min by default
+            $expire = apply_filters( 'wcl_password_expires', time() + 30*60, COOKIEPATH );
+
+            // set cookie
+            setcookie($cookie, $hasher->HashPassword( wp_unslash( $cat_pass ) ), $expire, COOKIE_DOMAIN, false);
+
             return $cookie;
         }
         return false;

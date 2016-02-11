@@ -52,37 +52,29 @@ class WC_Category_Locker_Frontend
 
         // make sure temr id is set / that the page is actually a category
         if (isset(get_queried_object()->term_id)) :
-            // get all present wcl_cookies as there might be multiple categories
-            // that are password protected
-            $wcl_cookies = $this->get_cookies();
 
-            // check if it's password protected
-            $is_password_protected = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password_protected');
-            if ($is_password_protected) {
-                $matched = array();
-                if (!empty($wcl_cookies)) {
-                    foreach ($wcl_cookies as $wclc_hash => $wclc_val) {
-                        // make sure value is 1
-                        if ($wclc_val) {
-                            // get current category id password
-                            $cat_pass = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password', true);
-                            // decrypt cookie
-                            $crypt = new Crypt();
-                            $crypt->setKey($cat_pass);
-                            $crypt->setData($wclc_hash);
-                            $matched[] = $crypt->decrypt();
-                        }
+            $cookie = 'wcl_' . md5( get_queried_object()->term_id );
+            $hash = isset($_COOKIE[ wp_unslash( $cookie ) ]) ? $_COOKIE[ wp_unslash( $cookie ) ] : false;
+
+            if(!$hash) {
+                add_filter( 'template_include', array($this, 'replace_template') );
+            } else {
+                $is_password_protected = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password_protected');
+                if ($is_password_protected) {
+                    // get current category id password
+                    $cat_pass = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password', true);
+                    // decrypt cookie
+                    require_once ABSPATH . WPINC . '/class-phpass.php';
+                    $hasher = new PasswordHash( 8, true );
+
+                    $check = $hasher->CheckPassword($cat_pass, $hash);
+
+                    if ($check) {
+                        return;
+                    } else {
+                        add_filter( 'template_include', array($this, 'replace_template') );
                     }
                 }
-
-                // if cookie is validated - which means user is logged in
-                // just return
-                if (in_array(get_queried_object()->term_id, $matched)) {
-                    return;
-                }
-                // if it is, remove woocommerce template contents,
-                // include password form
-                add_filter( 'template_include', array($this, 'replace_template') );
             }
         endif;
     }
