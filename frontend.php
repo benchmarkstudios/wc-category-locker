@@ -171,41 +171,36 @@ class WC_Category_Locker_Frontend
             // intersect both arrays
             $result_intersect = array_intersect($locked, $product_cat_ids);
 
+            // if it doesn't belong to locked category return
+            if(empty($result_intersect)) {
+                return;
+            }
+
             // tidy up our array, make sure it starts form 0
             $result = array_values($result_intersect);
 
-            // get all present wcl_cookies as there might be multiple categories
-            // that are password protected
-            $wcl_cookies = $this->get_cookies();
+            // check for cookie hash
+            $cookie = 'wcl_' . md5($result[0]);
+            $hash = isset($_COOKIE[ wp_unslash($cookie) ]) ? $_COOKIE[ wp_unslash($cookie) ] : false;
 
-            $matched = array();
-            if (!empty($wcl_cookies)) {
-                foreach ($wcl_cookies as $wclc_hash => $wclc_val) {
-                    // make sure value is 1
-                    if ($wclc_val) {
-                        // get current category id password
-                        $cat_pass = get_woocommerce_term_meta($terms[0]->term_id, 'wcl_cat_password', true);
-                        // decrypt cookie
-                        $crypt = new Crypt();
-                        $crypt->setKey($cat_pass);
-                        $crypt->setData($wclc_hash);
-                        $matched[] = $crypt->decrypt();
-                    }
-                }
-
-                // if there are cookies and they match, that means the category
-                // where product is is current unlocked - let visitor in.
-                if ((isset($result) && isset($matched)) && $result[0] == $matched[0]) {
-                    return;
-                }
-            }
-
-            // if yes, redirect to the category page (to enter password)
-            // we add is_product() check so the redirect doesn't end up being
-            // in a loop.
-            if (!empty($result) && is_product()) {
+            if (!$hash) {
                 wp_safe_redirect(get_term_link($result[0]));
                 exit();
+            } else {
+                // get current category id password
+                $cat_pass = get_woocommerce_term_meta($result[0], 'wcl_cat_password', true);
+                // decrypt cookie
+                require_once ABSPATH . WPINC . '/class-phpass.php';
+                $hasher = new PasswordHash(8, true);
+
+                $check = $hasher->CheckPassword($cat_pass, $hash);
+
+                if ($check) {
+                    return;
+                } else {
+                    wp_safe_redirect(get_term_link($result[0]));
+                    exit();
+                }
             }
         }
     }
