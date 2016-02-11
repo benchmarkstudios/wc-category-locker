@@ -52,27 +52,26 @@ class WC_Category_Locker_Frontend
 
         // make sure temr id is set / that the page is actually a category
         if (isset(get_queried_object()->term_id)) :
+            $is_password_protected = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password_protected');
+            if ($is_password_protected) {
+                $cookie = 'wcl_' . md5(get_queried_object()->term_id);
+                $hash = isset($_COOKIE[ wp_unslash($cookie) ]) ? $_COOKIE[ wp_unslash($cookie) ] : false;
 
-            $cookie = 'wcl_' . md5( get_queried_object()->term_id );
-            $hash = isset($_COOKIE[ wp_unslash( $cookie ) ]) ? $_COOKIE[ wp_unslash( $cookie ) ] : false;
-
-            if(!$hash) {
-                add_filter( 'template_include', array($this, 'replace_template') );
-            } else {
-                $is_password_protected = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password_protected');
-                if ($is_password_protected) {
+                if (!$hash) {
+                    add_filter('template_include', array($this, 'replace_template'));
+                } else {
                     // get current category id password
                     $cat_pass = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password', true);
                     // decrypt cookie
                     require_once ABSPATH . WPINC . '/class-phpass.php';
-                    $hasher = new PasswordHash( 8, true );
+                    $hasher = new PasswordHash(8, true);
 
                     $check = $hasher->CheckPassword($cat_pass, $hash);
 
                     if ($check) {
                         return;
                     } else {
-                        add_filter( 'template_include', array($this, 'replace_template') );
+                        add_filter('template_include', array($this, 'replace_template'));
                     }
                 }
             }
@@ -147,10 +146,14 @@ class WC_Category_Locker_Frontend
         global $post;
 
         // make sure we can access $post global to prevent errors
-        if(!isset($post)) return false;
+        if (!isset($post)) {
+            return false;
+        }
 
         // if it's not product page, we don't need to check further
-        if(!is_product()) return false;
+        if (!is_product()) {
+            return false;
+        }
 
         // get terms of current "post" / "page"
         $terms = get_the_terms($post->ID, 'product_cat');
@@ -169,7 +172,7 @@ class WC_Category_Locker_Frontend
             $result_intersect = array_intersect($locked, $product_cat_ids);
 
             // tidy up our array, make sure it starts form 0
-            $result = array_values( $result_intersect );
+            $result = array_values($result_intersect);
 
             // get all present wcl_cookies as there might be multiple categories
             // that are password protected
@@ -192,8 +195,8 @@ class WC_Category_Locker_Frontend
 
                 // if there are cookies and they match, that means the category
                 // where product is is current unlocked - let visitor in.
-                if((isset($result) && isset($matched)) && $result[0] == $matched[0] ) {
-                  return;
+                if ((isset($result) && isset($matched)) && $result[0] == $matched[0]) {
+                    return;
                 }
             }
 
