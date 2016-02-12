@@ -25,7 +25,7 @@ function wcl_get_the_password_form($category_id = false)
     $password_input_placeholder = apply_filters('wcl_passform_input_placeholder', '');
     $description = apply_filters('wcl_passform_description', '<p>'.__('This content is password protected. To view it please enter your password below:').'</p>');
 
-    // output form 
+    // output form
     $output = '
         <form action="'.esc_url(site_url('wp-login.php?action=postpass', 'login_post')).'" class="wcl-post-password-form '. $form_classes .'" method="post">
            <input type="hidden" name="wcl_cat_id" value="'.$category_id.'" />

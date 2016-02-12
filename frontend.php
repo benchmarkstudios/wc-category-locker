@@ -53,28 +53,28 @@ class WC_Category_Locker_Frontend
         // make sure temr id is set / that the page is actually a category
         if (isset(get_queried_object()->term_id)) :
             $is_password_protected = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password_protected');
-            if ($is_password_protected) {
-                $cookie = 'wcl_' . md5(get_queried_object()->term_id);
-                $hash = isset($_COOKIE[ wp_unslash($cookie) ]) ? $_COOKIE[ wp_unslash($cookie) ] : false;
+        if ($is_password_protected) {
+            $cookie = 'wcl_' . md5(get_queried_object()->term_id);
+            $hash = isset($_COOKIE[ wp_unslash($cookie) ]) ? $_COOKIE[ wp_unslash($cookie) ] : false;
 
-                if (!$hash) {
-                    add_filter('template_include', array($this, 'replace_template'));
+            if (!$hash) {
+                add_filter('template_include', array($this, 'replace_template'));
+            } else {
+                // get current category id password
+                $cat_pass = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password', true);
+                // decrypt cookie
+                require_once ABSPATH . WPINC . '/class-phpass.php';
+                $hasher = new PasswordHash(8, true);
+
+                $check = $hasher->CheckPassword($cat_pass, $hash);
+
+                if ($check) {
+                    return;
                 } else {
-                    // get current category id password
-                    $cat_pass = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password', true);
-                    // decrypt cookie
-                    require_once ABSPATH . WPINC . '/class-phpass.php';
-                    $hasher = new PasswordHash(8, true);
-
-                    $check = $hasher->CheckPassword($cat_pass, $hash);
-
-                    if ($check) {
-                        return;
-                    } else {
-                        add_filter('template_include', array($this, 'replace_template'));
-                    }
+                    add_filter('template_include', array($this, 'replace_template'));
                 }
             }
+        }
         endif;
     }
 
@@ -172,7 +172,7 @@ class WC_Category_Locker_Frontend
             $result_intersect = array_intersect($locked, $product_cat_ids);
 
             // if it doesn't belong to locked category return
-            if(empty($result_intersect)) {
+            if (empty($result_intersect)) {
                 return;
             }
 
