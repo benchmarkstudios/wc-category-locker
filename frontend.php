@@ -131,6 +131,8 @@ class WC_Category_Locker_Frontend
             'terms' => $locked,
             'operator' => 'NOT IN'
         )));
+
+        return $query;
     }
 
     /**
