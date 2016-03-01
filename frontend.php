@@ -45,6 +45,11 @@ class WC_Category_Locker_Frontend
      */
     public function password($query)
     {
+        // don't run if it's admin
+        if(is_admin()) {
+          return;
+        }
+
         // make sure current category is "product_cat"
         if (!isset(get_queried_object()->taxonomy) || (!isset(get_queried_object()->taxonomy) && (get_queried_object()->taxonomy !== 'product_cat'))) {
             return;
@@ -111,6 +116,11 @@ class WC_Category_Locker_Frontend
      */
     public function update_shop_queries($query)
     {
+        // don't run if it's admin
+        if(is_admin()) {
+          return;
+        }
+
         // make sure it's main query
         if (! $query->is_main_query()) {
             return;
