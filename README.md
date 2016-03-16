@@ -1,17 +1,13 @@
 # WooCommerce Category Locker
-Adds ability to password lock each category.
+Adds ability to password lock each category the same way as Wordpress gives you ability to lock each post.
 
-### Info
-* Current Stage of development - Testing, adding extra small features
-* WooCommerce versions support - latest (older not tested yet)
-
-### TODO (for 1.0 Release)
-* ~~Better crypt-php exception handling - redirects / messages~~
-* Test compatibility with twentyx themes
-* Test compatibility with some of the free WooCommerce themes
-* Add more hooks and filters
-* Version testing for WooCommerce and check for version when enabling plugin
-* Version testing for WordPress
+### General Info & Features
+* WooCommerce versions support - 2.2.0 and later
+* Wordpress version support - 3.5 and later
+* Products under locked category are excluded from the main shop loop
+* Passwords are fully encrypted and saved as a cookie
+* Password cookie lasts for 30 minutes by default
+* Ability to customise password template by copying it in to woocommerce theme folder
 
 ## Hooks
 List of available actions and filters:
@@ -29,3 +25,6 @@ List of available actions and filters:
 * **wcl_passform_description** - Password form description shown above input and submit button
 * **wcl_password_form** - Entire form markup
 * **wcl_password_expires** - Password expiry when entered (default 30min)
+
+### Suggestions
+Suggestions and requests are very welcome.

@@ -10,7 +10,7 @@
  * License: GPL2
  */
 
-/*  Copyright 2016  Lukas Juhas, Benchmark Studios  (email : hello@benchmark.co.uk)
+/*  Copyright 2016 Benchmark Studios  (email : hello@benchmark.co.uk)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -36,12 +36,35 @@ define('WCL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WCL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WCL_PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('WCL_PLUGIN_DOMAIN', 'wc-category-locker');
+define('WCL_MIN_WC_REQ', 2.2);
 
-if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-  //TODO: check for woocommerce version, validate version to make sure it works.
-  //This will require testing on older versions of woocomerce to see which can handle it
-  include(WCL_PLUGIN_DIR . 'includes/functions.php');
-  include(WCL_PLUGIN_DIR . 'admin.php');
-  include(WCL_PLUGIN_DIR . 'frontend.php');
-  include(WCL_PLUGIN_DIR . 'wc-category-locker.php');
+/**
+ * Dependency check
+ */
+if (! class_exists('WCL_Dependencies')) {
+    require_once WCL_PLUGIN_DIR . 'classes/class-wc-dependencies.php';
+}
+
+
+if (! function_exists('wcl_is_wc_active')) {
+    /**
+   * woocommerce detection
+   * @author Lukas Juhas
+   * @date   2016-03-16
+   * @return boolean    [description]
+   */
+    function wcl_is_wc_active()
+    {
+        return WCL_Dependencies::woocommerce_active_check();
+    }
+}
+
+/**
+ * If WooCommerce is active, let the magic happen.
+ */
+if (wcl_is_wc_active()) {
+    include(WCL_PLUGIN_DIR . 'includes/functions.php');
+    include(WCL_PLUGIN_DIR . 'admin.php');
+    include(WCL_PLUGIN_DIR . 'frontend.php');
+    include(WCL_PLUGIN_DIR . 'wc-category-locker.php');
 }

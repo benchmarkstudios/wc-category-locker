@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * main plugin class
+ */
 class WC_Category_Locker
 {
     /**
