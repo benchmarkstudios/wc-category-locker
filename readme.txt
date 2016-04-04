@@ -1,9 +1,9 @@
-=== WC Category Locker ===
+=== WooCommerce Category Locker ===
 Contributors: benchmarkstudios, LukasNeptun
 Donate Link: http://benchmark.co.uk/contact-us/
 Tags: category lock, taxonomy lock, lock, locker, woocommerce category, woocommerce,
 Requires at least: 3.5
-Tested up to: 4.4.2
+Tested up to: 4.5
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
