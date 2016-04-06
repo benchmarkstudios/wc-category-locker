@@ -18,12 +18,14 @@ function wcl_delete_plugin()
      *
      * @var [type]
      */
-    $terms = get_terms('product_cat');
-    if (!empty($terms)) :
-        foreach ($terms as $term) {
-            delete_woocommerce_term_meta($term_id, 'wcl_cat_password_protected');
-            delete_woocommerce_term_meta($term_id, 'wcl_cat_password');
-        }
-    endif;
+    if(function_exists('delete_woocommerce_term_meta')) {
+        $terms = get_terms('product_cat');
+        if (!empty($terms)) :
+            foreach ($terms as $term) {
+                delete_woocommerce_term_meta($term_id, 'wcl_cat_password_protected');
+                delete_woocommerce_term_meta($term_id, 'wcl_cat_password');
+            }
+        endif;
+    }
 }
 wcl_delete_plugin();

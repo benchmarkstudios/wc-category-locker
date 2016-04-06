@@ -4,7 +4,7 @@ Donate Link: http://benchmark.co.uk/contact-us/
 Tags: category lock, taxonomy lock, lock, locker, woocommerce category, woocommerce,
 Requires at least: 3.5
 Tested up to: 4.5
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,9 +65,15 @@ None yet
 4. Add product category page in the admin area.
 
 == Changelog ==
+= 1.0.1 =
+* Fixed issue where users were not able to remove plugin if they didn't have WooCommerce plugin installed.
+
 = 1.0 =
 * First release.
 
 == Upgrade Notice ==
+= 1.0.1 =
+* Fixed issue where users were not able to remove plugin if they didn't have WooCommerce plugin installed.
+
 = 1.0 =
 * First release.
