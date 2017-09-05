@@ -196,6 +196,7 @@ class WC_Category_Locker_Frontend
             $hash = isset($_COOKIE[ wp_unslash($cookie) ]) ? $_COOKIE[ wp_unslash($cookie) ] : false;
 
             if (!$hash) {
+                nocache_headers();
                 wp_safe_redirect(get_term_link($result[0]));
                 exit();
             } else {
@@ -210,6 +211,7 @@ class WC_Category_Locker_Frontend
                 if ($check) {
                     return;
                 } else {
+                    nocache_headers();
                     wp_safe_redirect(get_term_link($result[0]));
                     exit();
                 }
