@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Category Locker
  * Plugin URI: https://github.com/lukasjuhas/wc-category-locker
  * Description: Adds ability to password lock each category.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Benchmark
  * Author URI: http://benchmark.co.uk/
  * Text Domain: wc-category-locker
@@ -26,12 +26,12 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-# Exit if accessed directly
-if (! defined('ABSPATH')) {
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WCL_VERSION', '1.0.1');
+define('WCL_VERSION', '1.0.2');
 define('WCL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WCL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WCL_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -41,18 +41,16 @@ define('WCL_MIN_WC_REQ', 2.2);
 /**
  * Dependency check
  */
-if (! class_exists('WCL_Dependencies')) {
+if (!class_exists('WCL_Dependencies')) {
     require_once WCL_PLUGIN_DIR . 'classes/class-wc-dependencies.php';
 }
 
-
-if (! function_exists('wcl_is_wc_active')) {
+if (!function_exists('wcl_is_wc_active')) {
     /**
-   * woocommerce detection
-   * @author Lukas Juhas
-   * @date   2016-03-16
-   * @return boolean    [description]
-   */
+     * WC detection
+     *
+     * @return void
+     */
     function wcl_is_wc_active()
     {
         return WCL_Dependencies::woocommerce_active_check();
@@ -63,8 +61,8 @@ if (! function_exists('wcl_is_wc_active')) {
  * If WooCommerce is active, let the magic happen.
  */
 if (wcl_is_wc_active()) {
-    include(WCL_PLUGIN_DIR . 'includes/functions.php');
-    include(WCL_PLUGIN_DIR . 'admin.php');
-    include(WCL_PLUGIN_DIR . 'frontend.php');
-    include(WCL_PLUGIN_DIR . 'wc-category-locker.php');
+    include WCL_PLUGIN_DIR . 'includes/functions.php';
+    include WCL_PLUGIN_DIR . 'admin.php';
+    include WCL_PLUGIN_DIR . 'frontend.php';
+    include WCL_PLUGIN_DIR . 'wc-category-locker.php';
 }

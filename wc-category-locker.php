@@ -1,24 +1,23 @@
 <?php
+
 /**
- * main plugin class
+ * Woocommerce Category Locker
  */
 class WC_Category_Locker
 {
     /**
-     * main plugin class that does all the magic
-     * @author Lukas Juhas
-     * @date   2016-02-05
+     * Constructor
      */
     public function __construct()
     {
-        add_action('login_form_postpass', array($this, 'password'));
+        add_action('login_form_postpass', [$this, 'password']);
     }
 
     /**
-     * triggered when you enter password
-     * @author Lukas Juhas
-     * @date   2016-02-05
-     * @return [type]     [description]
+     * Triggered password entry
+     *
+     * @since 1.0
+     * @return void
      */
     public function password()
     {
@@ -48,13 +47,13 @@ class WC_Category_Locker
     }
 
     /**
-     * do the error
-     * @author Lukas Juhas
-     * @date   2016-02-05
-     * @param  [type]     $message [description]
-     * @return [type]              [description]
+     * Handle error error
+     *
+     * @param boolean $message
+     * @since 1.0
+     * @return void
      */
-    private function error($message = false)
+    protected function error($message = false)
     {
         // redirect back
         // TODO: probably add some error message - added attribute already
@@ -63,16 +62,16 @@ class WC_Category_Locker
     }
 
     /**
-     * check the cookie
-     * @author Lukas Juhas
-     * @date   2016-02-05
-     * @param  [type]     $cat_id [description]
-     * @return [type]             [description]
+     * Handle cookies
+     *
+     * @param Integer $cat_id
+     * @since 1.0
+     * @return void
      */
-    private function handle_cookies($cat_id)
+    protected function handle_cookies($cat_id)
     {
         $cookie = 'wcl_' . md5($cat_id);
-        $hash = isset($_COOKIE[ wp_unslash($cookie) ]) ? $_COOKIE[ wp_unslash($cookie) ] : false;
+        $hash = isset($_COOKIE[wp_unslash($cookie)]) ? $_COOKIE[wp_unslash($cookie)] : false;
 
         if (!$hash) {
             $this->generate_cat_pass_cookie($cat_id);
@@ -82,24 +81,25 @@ class WC_Category_Locker
     }
 
     /**
-     * generate encrypted cookie
-     * @author Lukas Juhas
-     * @date   2016-02-05
-     * @param  [type]     $cat_id [description]
-     * @return [type]             [description]
+     * Generate enctypted category password cookie
+     *
+     * @param Integer $cat_id
+     * @since 1.0
+     * @return void
      */
-    private function generate_cat_pass_cookie($cat_id)
+    protected function generate_cat_pass_cookie($cat_id)
     {
         // encrypted cookie
         $cat_pass = get_woocommerce_term_meta($cat_id, 'wcl_cat_password', true);
 
         require_once ABSPATH . WPINC . '/class-phpass.php';
+
         $hasher = new PasswordHash(8, true);
 
         $cookie = 'wcl_' . md5($cat_id);
         if (!isset($_COOKIE[$cookie])) {
             // create cookie for 30min by default
-            $expire = apply_filters('wcl_password_expires', time() + 30*60, COOKIEPATH);
+            $expire = apply_filters('wcl_password_expires', time() + 30 * 60, COOKIEPATH);
 
             // set cookie
             setcookie($cookie, $hasher->HashPassword(wp_unslash($cat_pass)), $expire, COOKIE_DOMAIN, false);
@@ -109,5 +109,5 @@ class WC_Category_Locker
         return false;
     }
 }
-# init
+// init
 $WC_Category_Locker = new WC_Category_Locker();

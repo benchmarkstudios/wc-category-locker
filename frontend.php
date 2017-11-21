@@ -1,31 +1,30 @@
 <?php
-
+/**
+ * Front-end
+ */
 class WC_Category_Locker_Frontend
 {
     /**
-     * constructor, all front-end related stuff.
-     *
-     * @author Lukas Juhas
-     * @date   2016-02-04
+     * Constructor
      */
     public function __construct()
     {
-        add_action('pre_get_posts', array($this, 'password'), 25);
-        add_action('pre_get_posts', array($this, 'update_shop_queries'), 26);
-        add_action('template_redirect', array($this, 'redirect_from_locked_product'));
+        add_action('pre_get_posts', [$this, 'password'], 25);
+        add_action('pre_get_posts', [$this, 'update_shop_queries'], 26);
+        add_action('template_redirect', [$this, 'redirect_from_locked_product']);
     }
 
     /**
-     * get plugin cookies
-     * @author Lukas Juhas
-     * @date   2016-02-10
-     * @return [type]     [description]
+     * Get cookies
+     *
+     * @since 1.0
+     * @return void
      */
     public function get_cookies()
     {
         // loop thorugh the cookies and ones with our prefix put in to
         // new array which we then return`
-        $wcl_cookies = array();
+        $wcl_cookies = [];
         foreach ($_COOKIE as $ec => $ec_val) {
             if (strpos($ec, 'wcl_') !== false) {
                 $wcl_cookies[$ec] = $ec_val;
@@ -36,12 +35,11 @@ class WC_Category_Locker_Frontend
     }
 
     /**
-     * main front end function wchich decides if the category is password
-     * protected or not
+     * Front end password handling
      *
-     * @author Lukas Juhas
-     * @date   2016-02-05
-     * @return [type]     [description]
+     * @param object $query
+     * @since 1.0
+     * @return void
      */
     public function password($query)
     {
@@ -56,40 +54,40 @@ class WC_Category_Locker_Frontend
         }
 
         // make sure temr id is set / that the page is actually a category
-        if (isset(get_queried_object()->term_id)) :
+        if (isset(get_queried_object()->term_id)) {
             $is_password_protected = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password_protected');
-        if ($is_password_protected) {
-            $cookie = 'wcl_' . md5(get_queried_object()->term_id);
-            $hash = isset($_COOKIE[ wp_unslash($cookie) ]) ? $_COOKIE[ wp_unslash($cookie) ] : false;
+            if ($is_password_protected) {
+                $cookie = 'wcl_' . md5(get_queried_object()->term_id);
+                $hash = isset($_COOKIE[wp_unslash($cookie)]) ? $_COOKIE[wp_unslash($cookie)] : false;
 
-            if (!$hash) {
-                add_filter('template_include', array($this, 'replace_template'));
-            } else {
-                // get current category id password
-                $cat_pass = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password', true);
-                // decrypt cookie
-                require_once ABSPATH . WPINC . '/class-phpass.php';
-                $hasher = new PasswordHash(8, true);
-
-                $check = $hasher->CheckPassword($cat_pass, $hash);
-
-                if ($check) {
-                    return;
+                if (!$hash) {
+                    add_filter('template_include', [$this, 'replace_template']);
                 } else {
-                    add_filter('template_include', array($this, 'replace_template'));
+                    // get current category id password
+                    $cat_pass = get_woocommerce_term_meta(get_queried_object()->term_id, 'wcl_cat_password', true);
+                    // decrypt cookie
+                    require_once ABSPATH . WPINC . '/class-phpass.php';
+
+                    $hasher = new PasswordHash(8, true);
+
+                    $check = $hasher->CheckPassword($cat_pass, $hash);
+
+                    if ($check) {
+                        return;
+                    } else {
+                        add_filter('template_include', [$this, 'replace_template']);
+                    }
                 }
             }
         }
-        endif;
     }
 
     /**
-     * replace template with a password form
+     * Replace tempalte with password form
      *
-     * @author Lukas Juhas
-     * @date   2016-02-05
-     * @param  [type]     $template [description]
-     * @return [type]               [description]
+     * @param string $template
+     * @since 1.0
+     * @return void
      */
     public function replace_template($template)
     {
@@ -107,12 +105,10 @@ class WC_Category_Locker_Frontend
     }
 
     /**
-     * exclude all categories that are locked for the visitor
+     * Update shop queries
      *
-     * @author Lukas Juhas
-     * @date   2016-02-05
-     * @param  [type]     $query [description]
-     * @return [type]            [description]
+     * @param object $query
+     * @return void
      */
     public function update_shop_queries($query)
     {
@@ -122,12 +118,12 @@ class WC_Category_Locker_Frontend
         }
 
         // make sure it's main query
-        if (! $query->is_main_query()) {
+        if (!$query->is_main_query()) {
             return;
         }
 
         // make sure its archive page
-        if (! $query->is_post_type_archive()) {
+        if (!$query->is_post_type_archive()) {
             return;
         }
 
@@ -135,23 +131,21 @@ class WC_Category_Locker_Frontend
         $locked = wcl_get_locked_categories();
 
         // set query to exclude locked ones
-        $query->set('tax_query', array(array(
+        $query->set('tax_query', [[
             'taxonomy' => 'product_cat',
             'field' => 'id',
             'terms' => $locked,
             'operator' => 'NOT IN'
-        )));
+        ]]);
 
         return $query;
     }
 
     /**
-     * if viewing product single page and the product belongs to locked
-     * category, redirect visitor to enter password
+     * Redirect from locked product
      *
-     * @author Lukas Juhas
-     * @date   2016-02-09
-     * @return [type]     [description]
+     * @since 1.0
+     * @return void
      */
     public function redirect_from_locked_product()
     {
@@ -172,7 +166,7 @@ class WC_Category_Locker_Frontend
 
         // make sure this "post" has product categories
         if (!empty($terms)) {
-            $product_cat_ids = array();
+            $product_cat_ids = [];
             foreach ($terms as $term) {
                 $product_cat_ids[] = $term->term_id;
             }
@@ -193,7 +187,7 @@ class WC_Category_Locker_Frontend
 
             // check for cookie hash
             $cookie = 'wcl_' . md5($result[0]);
-            $hash = isset($_COOKIE[ wp_unslash($cookie) ]) ? $_COOKIE[ wp_unslash($cookie) ] : false;
+            $hash = isset($_COOKIE[wp_unslash($cookie)]) ? $_COOKIE[wp_unslash($cookie)] : false;
 
             if (!$hash) {
                 nocache_headers();
@@ -204,6 +198,7 @@ class WC_Category_Locker_Frontend
                 $cat_pass = get_woocommerce_term_meta($result[0], 'wcl_cat_password', true);
                 // decrypt cookie
                 require_once ABSPATH . WPINC . '/class-phpass.php';
+
                 $hasher = new PasswordHash(8, true);
 
                 $check = $hasher->CheckPassword($cat_pass, $hash);
@@ -220,5 +215,5 @@ class WC_Category_Locker_Frontend
     }
 }
 
-# init
+// init
 $WC_Category_Locker_Frontend = new WC_Category_Locker_Frontend();
