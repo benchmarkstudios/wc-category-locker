@@ -9,8 +9,8 @@ class WC_Category_Locker_Frontend
      */
     public function __construct()
     {
-        add_action('pre_get_posts', [$this, 'password'], 25);
-        add_action('pre_get_posts', [$this, 'update_shop_queries'], 26);
+        add_action('pre_get_posts', [$this, 'password'], 10);
+        add_action('pre_get_posts', [$this, 'update_shop_queries'], 10);
         add_action('template_redirect', [$this, 'redirect_from_locked_product']);
     }
 
