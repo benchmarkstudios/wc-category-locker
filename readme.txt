@@ -3,8 +3,8 @@ Contributors: benchmarkstudios, LukasNeptun
 Donate Link: http://benchmark.co.uk/contact-us/
 Tags: category lock, taxonomy lock, lock, locker, woocommerce category, woocommerce,
 Requires at least: 3.5
-Tested up to: 4.9
-Stable tag: 1.0.2
+Tested up to: 4.9.1
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,9 @@ None yet
 4. Add product category page in the admin area.
 
 == Changelog ==
+= 1.0.3 =
+* change `pre_get_posts` action prioriry to default (10) for better theme support. [Thanks @marcs84](https://github.com/marcs84)
+
 = 1.0.2 =
 * Tidy up, minor updates and corrections in code
 

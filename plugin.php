@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Category Locker
  * Plugin URI: https://github.com/lukasjuhas/wc-category-locker
  * Description: Adds ability to password lock each category.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Benchmark
  * Author URI: http://benchmark.co.uk/
  * Text Domain: wc-category-locker
@@ -31,7 +31,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WCL_VERSION', '1.0.2');
+define('WCL_VERSION', '1.0.3');
 define('WCL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WCL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WCL_PLUGIN_BASENAME', plugin_basename(__FILE__));
